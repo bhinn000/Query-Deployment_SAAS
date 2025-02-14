@@ -23,15 +23,27 @@ namespace SAAS_Query_API.Controllers
             
             List<ConnectionStringEnt> connStringList = _myDBContext.COMPANY_DATABASE_INFO.ToList();
             ConnectionStringEnt cse = new ConnectionStringEnt();
-            string? connStringServerName = connStringList.Select(each => each.SERVERNAME).FirstOrDefault() ; //if no server name then send NULL
-            string? connStringDatabaseName = connStringList.Select(each => each.DATABASENAME).FirstOrDefault();
+            //string? connStringServerName = connStringList.Select(each => each.SERVERNAME).FirstOrDefault() ; //if no server name then send NULL
+            //string? connStringDatabaseName = connStringList.Select(each => each.DATABASENAME).FirstOrDefault();
+
+            var ServerDBInfoList=connStringList.Select(each => new
+            {
+                connStringServerName=each.SERVERNAME,
+                connStringDatabaseName=each.DATABASENAME
+            }).ToList();
+
             bool IntegratedSecurity = true;
             bool TrustServerCertificate = true;
 
-            connectionStringformat = $"Data Source={connStringServerName};Initial Catalog={connStringDatabaseName};Integrated Security={IntegratedSecurity};Trust Server Certificate={TrustServerCertificate}";
-            Console.WriteLine($"The connection string is : {connectionStringformat}");
+            foreach(var col in ServerDBInfoList)
+            {
+                connectionStringformat = $"Data Source={col.connStringServerName};Initial Catalog={col.connStringDatabaseName};Integrated Security={IntegratedSecurity};Trust Server Certificate={TrustServerCertificate}";
+                Console.WriteLine($"The connection string is : {connectionStringformat}");
+            }
+           
 
             return Ok(_myDBContext.COMPANY_DATABASE_INFO.ToList()); //must be table names from the database
         } 
+
     }
 }
