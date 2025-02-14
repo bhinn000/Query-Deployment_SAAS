@@ -8,6 +8,7 @@ namespace SAAS_Query_API.Services
 
         //"Data Source=DESKTOP-OINPHM8\\SQLEXPRESS01;Initial Catalog=CENTRAL;Integrated Security=True;Trust Server Certificate=True"
 
+
         //generate connection string for each row which is actually info for each database
 
         //these are not nullable and cant be empty too
@@ -21,6 +22,5 @@ namespace SAAS_Query_API.Services
         public string DBUSER { get; set; } = string.Empty; // UserName
         public string DBPASSWORD { get; set; } = string.Empty; // Password
         //public bool TrustServerCertificate { get; set; } = true; //
-
     }
 }

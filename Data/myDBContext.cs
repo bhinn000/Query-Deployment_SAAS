@@ -11,7 +11,6 @@ namespace SAAS_Query_API.Data
         }
 
         //add table
-        //public DbSet<ConnectionStringEnt> CentralDBConnectionString { get; set; }
         public DbSet<ConnectionStringEnt> COMPANY_DATABASE_INFO { get; set; }
 
 
