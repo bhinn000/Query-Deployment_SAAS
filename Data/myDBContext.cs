@@ -3,15 +3,18 @@ using SAAS_Query_API.Services;
 
 namespace SAAS_Query_API.Data
 {
-    public class myDBContext : DbContext
+    public class MyDBContext : DbContext
     {
-        public myDBContext(DbContextOptions<myDBContext> options) : base(options) 
+        public MyDBContext(DbContextOptions<MyDBContext> options) : base(options) 
         {
             
         }
 
         //add table
-        DbSet<ConnectionString> dbConnectionString { get; set; }
+        //public DbSet<ConnectionStringEnt> CentralDBConnectionString { get; set; }
+        public DbSet<ConnectionStringEnt> COMPANY_DATABASE_INFO { get; set; }
+
+
 
     }
 }

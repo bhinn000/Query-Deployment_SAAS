@@ -11,7 +11,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 //built in and link to the connection string too
-builder.Services.AddDbContext<myDBContext>(
+builder.Services.AddDbContext<MyDBContext>(
     options =>
     {
         options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));  

@@ -3,3 +3,7 @@
 *restore the backed up database
 *database name : CENTRAL
 *using EF core
+*there is each db for each client
+
+Steps: 
+Make connection string for each db , by getting the columns of each rows
