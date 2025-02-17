@@ -6,6 +6,18 @@
 *there is each db for each client
 
 Steps: 
-DBContext then injection
-Make connection string for each db , by getting the columns of each rows - done 1
-string concatenation
+DBContext then injection ✔✔
+Make connection string for each db , by getting the columns of each rows - done 1 ✔✔
+string concatenation ✔✔
+
+connect to different connection string
+make your own database 5 : demo ; a database includes many tables ✔✔
+also add them in table COMPANY_DATABASE_INFO  ✔✔
+delete existing from COMPANY_DATABASE_INFO ✔✔
+what is  your server address ✔✔
+make different user for different db 📌📌
+
+✔✔
+📎📎
+❌❌
+📌📌
