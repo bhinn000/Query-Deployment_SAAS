@@ -20,53 +20,56 @@ namespace SAAS_Query_API.Controllers
         }  
    
         [HttpGet]
-        //public ActionResult GetConnectionString()
-        public List<string> GetConnectionString()
+        public ActionResult GetConnectionString()
         {
             string connectionStringformat;
             //int numOfRows= _myDBContext.COMPANY_DATABASE_INFO.Count();
             List<string> connectionStringFormatArray=new List<string>();
-            List<ConnectionStringEnt> connStringList = _myDBContext.COMPANY_DATABASE_INFO.ToList();
             ConnectionStringEnt cse = new ConnectionStringEnt();
 
-            var ServerDBInfoList=connStringList.Select(each => new
+            try
             {
-                connStringServerName=each.SERVERNAME,
-                connStringDatabaseName=each.DATABASENAME
-            }).ToList();
-
-            bool IntegratedSecurity = true;
-            bool TrustServerCertificate = true;
-
-            foreach(var col in ServerDBInfoList)
-            {
-                connectionStringformat = $"Data Source={col.connStringServerName};Initial Catalog={col.connStringDatabaseName};Integrated Security={IntegratedSecurity};Trust Server Certificate={TrustServerCertificate}";
-                Console.WriteLine($"The connection string is : {connectionStringformat}");
-                connectionStringFormatArray.Add(connectionStringformat); 
-            }
-
-            string filename = @"H:\DOT NET INTERNSHIP\SAAS-Project\QueryOutside.txt";
-            using StreamReader streamReader = new StreamReader(filename);
-            string fromTextFile = streamReader.ReadToEnd();
-            Console.WriteLine($"++++++ {fromTextFile}");
-
-            foreach (var connString in connectionStringFormatArray)
-            {
-
-                using (SqlConnection conn = new SqlConnection(connString))
+                List<ConnectionStringEnt> connStringList = _myDBContext.COMPANY_DATABASE_INFO.ToList();
+                var ServerDBInfoList = connStringList.Select(each => new
                 {
-                    //string query = "update Basic_Details set NumberOfWardOffice= 40 ;";
-                    string query = fromTextFile;
+                    connStringServerName = each.SERVERNAME,
+                    connStringDatabaseName = each.DATABASENAME
+                }).ToList();
 
-                    SqlCommand cmd1 = new SqlCommand(query , conn);
-                    cmd1.Connection.Open();
-                    SqlDataReader retrievedValue =cmd1.ExecuteReader();
-                } 
+                bool IntegratedSecurity = true;
+                bool TrustServerCertificate = true;
+
+                foreach (var col in ServerDBInfoList)
+                {
+                    connectionStringformat = $"Data Source={col.connStringServerName};Initial Catalog={col.connStringDatabaseName};Integrated Security={IntegratedSecurity};Trust Server Certificate={TrustServerCertificate}";
+                    Console.WriteLine($"The connection string is : {connectionStringformat}");
+                    connectionStringFormatArray.Add(connectionStringformat);
+                }
+
+                string filename = @"H:\DOT NET INTERNSHIP\SAAS-Project\QueryOutside.txt";
+                using StreamReader streamReader = new StreamReader(filename);
+                string fromTextFile = streamReader.ReadToEnd();
+                Console.WriteLine($"++++++ {fromTextFile}");
+
+                foreach (var connString in connectionStringFormatArray)
+                {
+                    using (SqlConnection conn = new SqlConnection(connString))
+                    {
+                        string query = fromTextFile;
+                        SqlCommand cmd1 = new SqlCommand(query, conn);
+                        cmd1.Connection.Open();
+                        SqlDataReader retrievedValue = cmd1.ExecuteReader();
+                    }
+                }
+                return Ok(connectionStringFormatArray);
             }
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
 
-           
+            }
+            
 
-            return connectionStringFormatArray;
         } 
 
     }
