@@ -15,10 +15,6 @@ builder.Services.AddDbContext<MyDBContext>(
     options =>
     {
         options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));  
-        for(int i = 1; i < 3; i++)
-        {
-            Console.WriteLine("Hello DBs!");
-        }
     }
     );
 

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using SAAS_Query_API.Data;
 using SAAS_Query_API.Services;
@@ -19,10 +20,11 @@ namespace SAAS_Query_API.Controllers
         }  
    
         [HttpGet]
-        public ActionResult GetConnectionString()
+        //public ActionResult GetConnectionString()
+        public List<string> GetConnectionString()
         {
             string connectionStringformat;
-            int numOfRows= _myDBContext.COMPANY_DATABASE_INFO.Count();
+            //int numOfRows= _myDBContext.COMPANY_DATABASE_INFO.Count();
             List<string> connectionStringFormatArray=new List<string>();
             List<ConnectionStringEnt> connStringList = _myDBContext.COMPANY_DATABASE_INFO.ToList();
             ConnectionStringEnt cse = new ConnectionStringEnt();
@@ -45,9 +47,18 @@ namespace SAAS_Query_API.Controllers
 
             foreach(var connString in connectionStringFormatArray)
             {
-                Console.WriteLine($"From the array , here  is : {connString}");
+
+                using (SqlConnection conn = new SqlConnection(connString))
+                {
+                    string query = "update Basic_Details set NumberOfWardOffice= 40 ;";
+                    
+                    SqlCommand cmd1 = new SqlCommand(query , conn);
+                    cmd1.Connection.Open();
+                    SqlDataReader retrievedValue =cmd1.ExecuteReader();   
+                } 
             }
-            return Ok(_myDBContext.COMPANY_DATABASE_INFO.ToList()); //must be table names from the database
+            //return Ok(_myDBContext.COMPANY_DATABASE_INFO.ToList()); //must be table names from the database
+            return connectionStringFormatArray;
         } 
 
     }
