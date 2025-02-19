@@ -3,6 +3,7 @@ using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using SAAS_Query_API.Data;
 using SAAS_Query_API.Services;
+using System.Runtime.InteropServices;
 
 namespace SAAS_Query_API.Controllers
 {
@@ -46,21 +47,42 @@ namespace SAAS_Query_API.Controllers
                     connectionStringFormatArray.Add(connectionStringformat);
                 }
 
-                string filename = @"H:\DOT NET INTERNSHIP\SAAS-Project\QueryOutside.txt";
-                using StreamReader streamReader = new StreamReader(filename);
-                string fromTextFile = streamReader.ReadToEnd();
-                Console.WriteLine($"++++++ {fromTextFile}");
+                //string filename = @"H:\DOT NET INTERNSHIP\SAAS-Project\QueryOutside.txt";
+                //using StreamReader streamReader = new StreamReader(filename);
+                //string fromTextFile = streamReader.ReadToEnd();
+                //Console.WriteLine($"++++++ {fromTextFile}");
 
-                foreach (var connString in connectionStringFormatArray)
+                IEnumerable<string> txtFiles;
+                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
                 {
-                    using (SqlConnection conn = new SqlConnection(connString))
+                    Console.WriteLine("Linux");
+                     txtFiles = Directory.EnumerateFiles(@"/dev/sdh/DOT NET INTERNSHIPSAAS-Project/SAAS Query API/SQL Query Files Folder/", "*.txt");//linux
+                }
+                else
+                {
+                    Console.WriteLine("Windows");
+                    txtFiles = Directory.EnumerateFiles(@"H:\DOT NET INTERNSHIP\SAAS-Project\SAAS Query API\SQL Query Files Folder\", "*.txt"); //windows
+                }
+              
+
+                foreach (string currentFile in txtFiles)
+                {
+                    using StreamReader streamReader = new StreamReader(currentFile);
+                    string fromTextFile = streamReader.ReadToEnd();
+
+                    foreach (var connString in connectionStringFormatArray)
                     {
-                        string query = fromTextFile;
-                        SqlCommand cmd1 = new SqlCommand(query, conn);
-                        cmd1.Connection.Open();
-                        SqlDataReader retrievedValue = cmd1.ExecuteReader();
+                        using (SqlConnection conn = new SqlConnection(connString))
+                        {
+                            string query = fromTextFile;
+                            SqlCommand cmd1 = new SqlCommand(query, conn);
+                            cmd1.Connection.Open();
+                            SqlDataReader retrievedValue = cmd1.ExecuteReader();
+                        }
                     }
                 }
+                
+                
                 return Ok(connectionStringFormatArray);
             }
             catch(Exception ex)

@@ -1,0 +1,1 @@
+update Basic_Details set NumberOfWardOffice= 100 ;
