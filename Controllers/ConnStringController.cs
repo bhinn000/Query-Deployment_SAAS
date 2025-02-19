@@ -18,13 +18,13 @@ namespace SAAS_Query_API.Controllers
         {
             _myDBContext = myDBContext; 
 
-        }  
-   
-        [HttpGet]
-        public ActionResult GetConnectionString()
+        }
+
+        //[HttpGet]
+        [HttpGet("{path}")]
+        public ActionResult GetConnectionString(string path)
         {
             string connectionStringformat;
-            //int numOfRows= _myDBContext.COMPANY_DATABASE_INFO.Count();
             List<string> connectionStringFormatArray=new List<string>();
             ConnectionStringEnt cse = new ConnectionStringEnt();
 
@@ -55,13 +55,17 @@ namespace SAAS_Query_API.Controllers
                 IEnumerable<string> txtFiles;
                  if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
                 {
-                    Console.WriteLine("Linux");
-                     txtFiles = Directory.EnumerateFiles(@"/dev/sdh/DOT NET INTERNSHIPSAAS-Project/SAAS Query API/SQL Query Files Folder/", "*.txt");//linux
+                     Console.WriteLine("Linux");
+                     txtFiles = Directory.EnumerateFiles(path);
+                    Console.WriteLine($"The path is {path}");
+                    //txtFiles = Directory.EnumerateFiles(@"/dev/sdh/DOT NET INTERNSHIPSAAS-Project/SAAS Query API/SQL Query Files Folder/", "*.txt");//linux
                 }
                 else
                 {
                     Console.WriteLine("Windows");
-                    txtFiles = Directory.EnumerateFiles(@"H:\DOT NET INTERNSHIP\SAAS-Project\SAAS Query API\SQL Query Files Folder\", "*.txt"); //windows
+                    txtFiles = Directory.EnumerateFiles(path);
+                    Console.WriteLine($"The path is {path}");
+                    //txtFiles = Directory.EnumerateFiles(@"H:\DOT NET INTERNSHIP\SAAS-Project\SAAS Query API\SQL Query Files Folder\", "*.txt"); //windows
                 }
               
 
