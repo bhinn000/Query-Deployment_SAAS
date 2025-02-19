@@ -45,21 +45,32 @@ namespace SAAS_Query_API.Controllers
                 connectionStringFormatArray.Add(connectionStringformat); 
             }
 
-            foreach(var connString in connectionStringFormatArray)
+            string filename = @"H:\DOT NET INTERNSHIP\SAAS-Project\QueryOutside.txt";
+            using StreamReader streamReader = new StreamReader(filename);
+            string fromTextFile = streamReader.ReadToEnd();
+            Console.WriteLine($"++++++ {fromTextFile}");
+
+            foreach (var connString in connectionStringFormatArray)
             {
 
                 using (SqlConnection conn = new SqlConnection(connString))
                 {
-                    string query = "update Basic_Details set NumberOfWardOffice= 40 ;";
-                    
+                    //string query = "update Basic_Details set NumberOfWardOffice= 40 ;";
+                    string query = fromTextFile;
+
                     SqlCommand cmd1 = new SqlCommand(query , conn);
                     cmd1.Connection.Open();
-                    SqlDataReader retrievedValue =cmd1.ExecuteReader();   
+                    SqlDataReader retrievedValue =cmd1.ExecuteReader();
                 } 
             }
-            //return Ok(_myDBContext.COMPANY_DATABASE_INFO.ToList()); //must be table names from the database
+
+           
+
             return connectionStringFormatArray;
         } 
 
     }
 }
+
+
+//ifnotfoundpath , there existsnocolumnIDindifferentDB , whatifblank , incorrect syntax of sql inside code

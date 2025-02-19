@@ -1,0 +1,3 @@
+update Basic_Details set NumberOfWardOffice= 100 ;
+update Citizen_Details set Occupation='Mechanic'
+where citizenid='CIT02';
