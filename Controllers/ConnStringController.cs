@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using DocumentFormat.OpenXml.InkML;
+using DocumentFormat.OpenXml.Spreadsheet;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using SAAS_Query_API.Data;
@@ -78,16 +80,19 @@ namespace SAAS_Query_API.Controllers
                 var ServerDBInfoList = connStringList.Select(each => new
                 {
                     connStringServerName = each.SERVERNAME,
-                    connStringDatabaseName = each.DATABASENAME
+                    connStringDatabaseName = each.DATABASENAME,
+                    connStringUserName= each.DBUSER,
+                    connStringPassword = each.DBPASSWORD
                 }).ToList();
 
                 bool IntegratedSecurity = true;
                 bool TrustServerCertificate = true;
 
                 foreach (var col in ServerDBInfoList)
-                {
-                    connectionStringformat = $"Data Source={col.connStringServerName};Initial Catalog={col.connStringDatabaseName};Integrated Security={IntegratedSecurity};Trust Server Certificate={TrustServerCertificate}";
-                    //Console.WriteLine($"The connection string is : {connectionStringformat}");
+                {  
+                    //connectionStringformat = $"Data Source={col.connStringServerName};Initial Catalog={col.connStringDatabaseName};Integrated Security={IntegratedSecurity};Trust Server Certificate={TrustServerCertificate}";
+                    connectionStringformat = $"Data Source={col.connStringServerName};Initial Catalog={col.connStringDatabaseName};User ID = {col.connStringUserName}; Password = {col.connStringPassword}; Integrated Security={IntegratedSecurity};Trust Server Certificate={TrustServerCertificate}";
+                    Console.WriteLine($"The connection string is : {connectionStringformat}");
                     connectionStringFormatArray.Add(connectionStringformat);
                 }
 
