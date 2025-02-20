@@ -1,2 +1,2 @@
-update Citizen_Details set CitizenName='Ram Shah' 
+update Citizen_Details set CitizenName='Ram Shrestha' 
 where CitizenId='CIT01';

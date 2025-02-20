@@ -27,20 +27,20 @@ namespace SAAS_Query_API.Controllers
             try
             {
                 IEnumerable<string> txtFiles;
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-                {
-                    Console.WriteLine("Linux");
-                    txtFiles = Directory.EnumerateFiles(path);
-                    Console.WriteLine($"The path is {path}");
-                    //txtFiles = Directory.EnumerateFiles(@"/dev/sdh/DOT NET INTERNSHIPSAAS-Project/SAAS Query API/SQL Query Files Folder/", "*.txt");//linux
-                }
-                else
-                {
+                //if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                //{
+                //    Console.WriteLine("Linux");
+                //    txtFiles = Directory.EnumerateFiles(path);
+                //    Console.WriteLine($"The path is {path}");
+                //    //txtFiles = Directory.EnumerateFiles(@"/dev/sdh/DOT NET INTERNSHIPSAAS-Project/SAAS Query API/SQL Query Files Folder/", "*.txt");//linux
+                //}
+                //else
+                //{
                     Console.WriteLine("Windows");
-                    txtFiles = Directory.EnumerateFiles(path);
+                    //txtFiles = Directory.EnumerateFiles(path);
                     Console.WriteLine($"The path is {path}");
-                    //txtFiles = Directory.EnumerateFiles(@"H:\DOT NET INTERNSHIP\SAAS-Project\SAAS Query API\SQL Query Files Folder\", "*.txt"); //windows
-                }
+                    txtFiles = Directory.EnumerateFiles(@"H:\DOT NET INTERNSHIP\SAAS-Project\SAAS Query API\SQL Query Files Folder\", "*.txt"); //windows
+                //}
 
                 foreach (string currentFile in txtFiles)
                 {
