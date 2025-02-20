@@ -20,9 +20,53 @@ namespace SAAS_Query_API.Controllers
 
         }
 
+        async Task  RunQueryFromFilesAsync(List<string> connectionStringFormatArray, string path)
+        {
+            try
+            {
+                IEnumerable<string> txtFiles;
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                {
+                    Console.WriteLine("Linux");
+                    txtFiles = Directory.EnumerateFiles(path);
+                    Console.WriteLine($"The path is {path}");
+                    //txtFiles = Directory.EnumerateFiles(@"/dev/sdh/DOT NET INTERNSHIPSAAS-Project/SAAS Query API/SQL Query Files Folder/", "*.txt");//linux
+                }
+                else
+                {
+                    Console.WriteLine("Windows");
+                    txtFiles = Directory.EnumerateFiles(path);
+                    Console.WriteLine($"The path is {path}");
+                    //txtFiles = Directory.EnumerateFiles(@"H:\DOT NET INTERNSHIP\SAAS-Project\SAAS Query API\SQL Query Files Folder\", "*.txt"); //windows
+                }
+
+                foreach (string currentFile in txtFiles)
+                {
+                    using StreamReader streamReader = new StreamReader(currentFile);
+                    string fromTextFile = await streamReader.ReadToEndAsync();
+
+                    foreach (var connString in connectionStringFormatArray)
+                    {
+                        using (SqlConnection conn = new SqlConnection(connString))
+                        {
+                            string query = fromTextFile;
+                            SqlCommand cmd1 = new SqlCommand(query, conn);
+                            await cmd1.Connection.OpenAsync();
+                            SqlDataReader retrievedValue =await cmd1.ExecuteReaderAsync();
+                        }
+                    }
+                }
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            
+        }
+
         //[HttpGet]
         [HttpGet("{path}")]
-        public ActionResult GetConnectionString(string path)
+        public async Task<ActionResult> GetConnectionString(string path)
         {
             string connectionStringformat;
             List<string> connectionStringFormatArray=new List<string>();
@@ -30,7 +74,7 @@ namespace SAAS_Query_API.Controllers
 
             try
             {
-                List<ConnectionStringEnt> connStringList = _myDBContext.COMPANY_DATABASE_INFO.ToList();
+                List<ConnectionStringEnt> connStringList = await _myDBContext.COMPANY_DATABASE_INFO.ToListAsync();
                 var ServerDBInfoList = connStringList.Select(each => new
                 {
                     connStringServerName = each.SERVERNAME,
@@ -43,51 +87,14 @@ namespace SAAS_Query_API.Controllers
                 foreach (var col in ServerDBInfoList)
                 {
                     connectionStringformat = $"Data Source={col.connStringServerName};Initial Catalog={col.connStringDatabaseName};Integrated Security={IntegratedSecurity};Trust Server Certificate={TrustServerCertificate}";
-                    Console.WriteLine($"The connection string is : {connectionStringformat}");
+                    //Console.WriteLine($"The connection string is : {connectionStringformat}");
                     connectionStringFormatArray.Add(connectionStringformat);
                 }
 
-                //string filename = @"H:\DOT NET INTERNSHIP\SAAS-Project\QueryOutside.txt";
-                //using StreamReader streamReader = new StreamReader(filename);
-                //string fromTextFile = streamReader.ReadToEnd();
-                //Console.WriteLine($"++++++ {fromTextFile}");
-
-                IEnumerable<string> txtFiles;
-                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-                {
-                     Console.WriteLine("Linux");
-                     txtFiles = Directory.EnumerateFiles(path);
-                    Console.WriteLine($"The path is {path}");
-                    //txtFiles = Directory.EnumerateFiles(@"/dev/sdh/DOT NET INTERNSHIPSAAS-Project/SAAS Query API/SQL Query Files Folder/", "*.txt");//linux
-                }
-                else
-                {
-                    Console.WriteLine("Windows");
-                    txtFiles = Directory.EnumerateFiles(path);
-                    Console.WriteLine($"The path is {path}");
-                    //txtFiles = Directory.EnumerateFiles(@"H:\DOT NET INTERNSHIP\SAAS-Project\SAAS Query API\SQL Query Files Folder\", "*.txt"); //windows
-                }
-              
-
-                foreach (string currentFile in txtFiles)
-                {
-                    using StreamReader streamReader = new StreamReader(currentFile);
-                    string fromTextFile = streamReader.ReadToEnd();
-
-                    foreach (var connString in connectionStringFormatArray)
-                    {
-                        using (SqlConnection conn = new SqlConnection(connString))
-                        {
-                            string query = fromTextFile;
-                            SqlCommand cmd1 = new SqlCommand(query, conn);
-                            cmd1.Connection.Open();
-                            SqlDataReader retrievedValue = cmd1.ExecuteReader();
-                        }
-                    }
-                }
+    
+                await RunQueryFromFilesAsync(connectionStringFormatArray, path);
                 
-                
-                return Ok(connectionStringFormatArray);
+                return Ok();
             }
             catch(Exception ex)
             {
@@ -101,5 +108,3 @@ namespace SAAS_Query_API.Controllers
     }
 }
 
-
-//ifnotfoundpath , there existsnocolumnIDindifferentDB , whatifblank , incorrect syntax of sql inside code
