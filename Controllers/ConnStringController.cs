@@ -12,7 +12,6 @@ namespace SAAS_Query_API.Controllers
     {
         private readonly MyDBContext _myDBContext;
         private readonly string? _path;
-        
 
         public ConnStringController(MyDBContext myDBContext, IConfiguration configuration)
         {
@@ -20,26 +19,25 @@ namespace SAAS_Query_API.Controllers
             _path = configuration["AppSettings:FolderPath"];
         }
 
-        string GetPath()
+        IEnumerable<string> GetPathAndTextFiles()
         {
-            //string? path = Environment.GetEnvironmentVariable("Folder_Path");
             if (string.IsNullOrEmpty(_path)){
                 throw new Exception("There is no given path in this device");
             }
-            Console.WriteLine($"{ _path} is here");
-            return _path;
+
+            IEnumerable<string> txtFiles;
+            Console.WriteLine($"The path is {_path}");
+            txtFiles = Directory.EnumerateFiles(_path, "*.txt"); //windows
+
+            return txtFiles;
         }
 
         async Task  RunQueryFromFilesAsync(List<string> connectionStringFormatArray)
         {
             try
             {
-                string path=GetPath();
-                IEnumerable<string> txtFiles;
-                //Console.WriteLine("Windows");
-                //txtFiles = Directory.EnumerateFiles(path);
-                Console.WriteLine($"The path is {path}");
-                txtFiles = Directory.EnumerateFiles(@"H:\DOT NET INTERNSHIP\SAAS-Project\SAAS Query API\SQL Query Files Folder\", "*.txt"); //windows
+                IEnumerable<string> txtFiles =GetPathAndTextFiles();
+               
 
                 foreach (string currentFile in txtFiles)
                 {
@@ -83,7 +81,7 @@ namespace SAAS_Query_API.Controllers
                     connStringPassword = each.DBPASSWORD
                 }).ToList();
 
-                bool IntegratedSecurity = true;
+                bool IntegratedSecurity = false;
                 bool TrustServerCertificate = true;
 
                 foreach (var col in ServerDBInfoList)
@@ -93,7 +91,6 @@ namespace SAAS_Query_API.Controllers
                     connectionStringFormatArray.Add(connectionStringformat);
                 }
 
-    
                 await RunQueryFromFilesAsync(connectionStringFormatArray);
                 
                 return Ok();
@@ -104,7 +101,6 @@ namespace SAAS_Query_API.Controllers
 
             }
             
-
         } 
 
     }
