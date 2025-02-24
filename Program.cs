@@ -1,7 +1,16 @@
 using Microsoft.EntityFrameworkCore;
 using SAAS_Query_API.Data;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
+
+var configuration = builder.Configuration;
+string loggedFileStoredIn= configuration["AppSettings:StoredInPath"];
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.File(loggedFileStoredIn, rollingInterval: RollingInterval.Day)
+    .CreateLogger();
+
+builder.Host.UseSerilog();
 
 // Add services to the container.
 
@@ -34,3 +43,4 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+Log.CloseAndFlush();

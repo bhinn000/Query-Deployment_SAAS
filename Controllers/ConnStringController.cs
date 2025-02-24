@@ -3,6 +3,7 @@ using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using SAAS_Query_API.Data;
 using SAAS_Query_API.Services;
+using System.Diagnostics;
 
 namespace SAAS_Query_API.Controllers
 {
@@ -12,46 +13,59 @@ namespace SAAS_Query_API.Controllers
     {
         private readonly MyDBContext _myDBContext;
         private readonly string? _path;
+        private readonly string _storedInPath;
+        private readonly ILogger<ConnStringController> _logger;
 
-        public ConnStringController(MyDBContext myDBContext, IConfiguration configuration)
+        public ConnStringController(MyDBContext myDBContext, IConfiguration configuration, ILogger<ConnStringController> logger)
         {
             _myDBContext = myDBContext;
             _path = configuration["AppSettings:FolderPath"];
+            _logger = logger;
+            _storedInPath = configuration["AppSettings:StoredInPath"];
         }
 
         IEnumerable<string> GetPathAndTextFiles()
         {
             if (string.IsNullOrEmpty(_path)){
+                _logger.LogWarning("No folder path provided in configuration.");
                 throw new Exception("There is no given path in this device");
             }
 
             IEnumerable<string> txtFiles;
             Console.WriteLine($"The path is {_path}");
+            _logger.LogInformation($"Fetching text files from path: {_path}");
             txtFiles = Directory.EnumerateFiles(_path, "*.txt"); //windows
+            _logger.LogInformation($"Found {txtFiles.Count()} text files.");
 
             return txtFiles;
         }
 
-        async Task  RunQueryFromFilesAsync(List<string> connectionStringFormatArray)
-        {
+        async Task RunQueryFromFilesAsync(List<string> connectionStringFormatArray)
+        {    
             try
             {
                 IEnumerable<string> txtFiles =GetPathAndTextFiles();
-               
+                _logger.LogInformation("Starting query execution from text files.");
 
                 foreach (string currentFile in txtFiles)
                 {
+                    _logger.LogInformation($"Reading SQL from file: {currentFile}");
                     using StreamReader streamReader = new StreamReader(currentFile);
                     string fromTextFile = await streamReader.ReadToEndAsync();
 
                     foreach (var connString in connectionStringFormatArray)
                     {
+                        _logger.LogInformation($"Executing query on connection: {connString}");
                         using (SqlConnection conn = new SqlConnection(connString))
                         {
                             string query = fromTextFile;
+
                             SqlCommand cmd1 = new SqlCommand(query, conn);
                             await cmd1.Connection.OpenAsync();
                             SqlDataReader retrievedValue =await cmd1.ExecuteReaderAsync();
+                            _logger.LogInformation($"Query executed successfully");
+
+
                         }
                     }
                 }
@@ -59,9 +73,11 @@ namespace SAAS_Query_API.Controllers
             catch(Exception ex)
             {
                 Console.WriteLine(ex.Message);
+                _logger.LogError($"Error while executing queries: {ex.Message}");
             }
             
         }
+
 
         [HttpGet]
         public async Task<ActionResult> GetConnectionString()
@@ -88,15 +104,19 @@ namespace SAAS_Query_API.Controllers
                 {      
                     connectionStringformat = $"Data Source={col.connStringServerName};Initial Catalog={col.connStringDatabaseName};User ID = {col.connStringUserName}; Password = {col.connStringPassword}; Integrated Security={IntegratedSecurity};Trust Server Certificate={TrustServerCertificate}";
                     Console.WriteLine($"The connection string is : {connectionStringformat}");
+                    _logger.LogInformation($"Connecting to {col.connStringDatabaseName} of {col.connStringServerName}.");
                     connectionStringFormatArray.Add(connectionStringformat);
                 }
 
                 await RunQueryFromFilesAsync(connectionStringFormatArray);
-                
+
+                Process.Start(new ProcessStartInfo(_storedInPath) { UseShellExecute = true });
+
                 return Ok();
             }
             catch(Exception ex)
             {
+                _logger.LogError($"Failed to get connection strings: {ex.Message}");
                 return BadRequest(ex.Message);
 
             }
