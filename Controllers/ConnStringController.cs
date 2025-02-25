@@ -3,8 +3,6 @@ using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using SAAS_Query_API.Data;
 using SAAS_Query_API.Services;
-using Serilog;
-using System.Diagnostics;
 
 namespace SAAS_Query_API.Controllers
 {

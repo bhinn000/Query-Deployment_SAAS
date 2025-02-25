@@ -4,6 +4,7 @@ using Serilog;
 
     var builder = WebApplication.CreateBuilder(args);
 
+File.WriteAllText("C:\\Hello\\myapp.txt", string.Empty);
 builder.Host.UseSerilog((context, configuration)=>
     configuration.ReadFrom.Configuration(context.Configuration)
 );
