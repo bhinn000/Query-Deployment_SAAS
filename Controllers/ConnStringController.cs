@@ -3,6 +3,7 @@ using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using SAAS_Query_API.Data;
 using SAAS_Query_API.Services;
+using Serilog;
 using System.Diagnostics;
 
 namespace SAAS_Query_API.Controllers
@@ -13,7 +14,6 @@ namespace SAAS_Query_API.Controllers
     {
         private readonly MyDBContext _myDBContext;
         private readonly string? _path;
-        private readonly string _storedInPath;
         private readonly ILogger<ConnStringController> _logger;
 
         public ConnStringController(MyDBContext myDBContext, IConfiguration configuration, ILogger<ConnStringController> logger)
@@ -21,7 +21,6 @@ namespace SAAS_Query_API.Controllers
             _myDBContext = myDBContext;
             _path = configuration["AppSettings:FolderPath"];
             _logger = logger;
-            _storedInPath = configuration["AppSettings:StoredInPath"];
         }
 
         IEnumerable<string> GetPathAndTextFiles()
@@ -78,7 +77,6 @@ namespace SAAS_Query_API.Controllers
             
         }
 
-
         [HttpGet]
         public async Task<ActionResult> GetConnectionString()
         {
@@ -110,17 +108,14 @@ namespace SAAS_Query_API.Controllers
 
                 await RunQueryFromFilesAsync(connectionStringFormatArray);
 
-                Process.Start(new ProcessStartInfo(_storedInPath) { UseShellExecute = true });
-
                 return Ok();
             }
             catch(Exception ex)
             {
                 _logger.LogError($"Failed to get connection strings: {ex.Message}");
                 return BadRequest(ex.Message);
-
             }
-            
+
         } 
 
     }

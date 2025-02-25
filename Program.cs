@@ -2,45 +2,42 @@ using Microsoft.EntityFrameworkCore;
 using SAAS_Query_API.Data;
 using Serilog;
 
-var builder = WebApplication.CreateBuilder(args);
+    var builder = WebApplication.CreateBuilder(args);
 
-var configuration = builder.Configuration;
-string loggedFileStoredIn= configuration["AppSettings:StoredInPath"];
-Log.Logger = new LoggerConfiguration()
-    .WriteTo.File(loggedFileStoredIn, rollingInterval: RollingInterval.Day)
-    .CreateLogger();
-
-builder.Host.UseSerilog();
+builder.Host.UseSerilog((context, configuration)=>
+    configuration.ReadFrom.Configuration(context.Configuration)
+);
 
 // Add services to the container.
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+    // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+    builder.Services.AddEndpointsApiExplorer();
+    builder.Services.AddSwaggerGen();
 
-//built in and link to the connection string too
-builder.Services.AddDbContext<MyDBContext>(
-    options =>
+    //built in and link to the connection string too
+    builder.Services.AddDbContext<MyDBContext>(
+        options =>
+        {
+            options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));  
+        }
+        );
+
+    var app = builder.Build();
+
+    // Configure the HTTP request pipeline.
+    if (app.Environment.IsDevelopment())
     {
-        options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));  
+        app.UseSwagger();
+        app.UseSwaggerUI();
     }
-    );
 
-var app = builder.Build();
+    app.UseSerilogRequestLogging();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+    app.UseHttpsRedirection();
 
-app.UseHttpsRedirection();
+    app.UseAuthorization();
 
-app.UseAuthorization();
+    app.MapControllers();
 
-app.MapControllers();
-
-app.Run();
-Log.CloseAndFlush();
+    app.Run();
