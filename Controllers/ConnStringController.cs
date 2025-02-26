@@ -3,6 +3,7 @@ using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using SAAS_Query_API.Data;
 using SAAS_Query_API.Services;
+using System.Text;
 
 namespace SAAS_Query_API.Controllers
 {
@@ -52,7 +53,6 @@ namespace SAAS_Query_API.Controllers
 
                     foreach (var connString in connectionStringFormatArray)
                     {
-                        _logger.LogInformation($"Executing query on connection: {connString}");
                         using (SqlConnection conn = new SqlConnection(connString))
                         {
                             string query = fromTextFile;
@@ -90,8 +90,10 @@ namespace SAAS_Query_API.Controllers
                     connStringServerName = each.SERVERNAME,
                     connStringDatabaseName = each.DATABASENAME,
                     connStringUserName= each.DBUSER,
-                    connStringPassword = each.DBPASSWORD
-                }).ToList();
+                    connStringPassword = EncryptionHelper.Encrypt(EncryptionHelper.FromHexString((each.DBPASSWORD).ToString()))
+
+
+            }).ToList();
 
                 bool IntegratedSecurity = false;
                 bool TrustServerCertificate = true;
@@ -99,7 +101,7 @@ namespace SAAS_Query_API.Controllers
                 foreach (var col in ServerDBInfoList)
                 {      
                     connectionStringformat = $"Data Source={col.connStringServerName};Initial Catalog={col.connStringDatabaseName};User ID = {col.connStringUserName}; Password = {col.connStringPassword}; Integrated Security={IntegratedSecurity};Trust Server Certificate={TrustServerCertificate}";
-                    Console.WriteLine($"The connection string is : {connectionStringformat}");
+                    //Console.WriteLine($"The connection string is : {connectionStringformat}");
                     _logger.LogInformation($"Connecting to {col.connStringDatabaseName} of {col.connStringServerName}.");
                     connectionStringFormatArray.Add(connectionStringformat);
                 }
