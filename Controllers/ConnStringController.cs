@@ -3,13 +3,10 @@ using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using SAAS_Query_API.Data;
 using SAAS_Query_API.Services;
-using System.Text;
 
 namespace SAAS_Query_API.Controllers
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class ConnStringController : ControllerBase
+    public class ConnStringController 
     {
         private readonly MyDBContext _myDBContext;
         private readonly string? _path;
@@ -30,9 +27,8 @@ namespace SAAS_Query_API.Controllers
             }
 
             IEnumerable<string> txtFiles;
-            Console.WriteLine($"The path is {_path}");
             _logger.LogInformation($"Fetching text files from path: {_path}");
-            txtFiles = Directory.EnumerateFiles(_path, "*.txt"); //windows
+            txtFiles = Directory.EnumerateFiles(_path, "*.txt"); 
             _logger.LogInformation($"Found {txtFiles.Count()} text files.");
 
             return txtFiles;
@@ -69,14 +65,12 @@ namespace SAAS_Query_API.Controllers
             }
             catch(Exception ex)
             {
-                Console.WriteLine(ex.Message);
                 _logger.LogError($"Error while executing queries: {ex.Message}");
             }
             
         }
 
-        [HttpGet]
-        public async Task<ActionResult> GetConnectionString()
+        public async Task<string> GetConnectionString()
         {
             string connectionStringformat;
             List<string> connectionStringFormatArray=new List<string>();
@@ -91,9 +85,7 @@ namespace SAAS_Query_API.Controllers
                     connStringDatabaseName = each.DATABASENAME,
                     connStringUserName= each.DBUSER,
                     connStringPassword = EncryptionHelper.Encrypt(EncryptionHelper.FromHexString((each.DBPASSWORD).ToString()))
-
-
-            }).ToList();
+                }).ToList();
 
                 bool IntegratedSecurity = false;
                 bool TrustServerCertificate = true;
@@ -101,23 +93,21 @@ namespace SAAS_Query_API.Controllers
                 foreach (var col in ServerDBInfoList)
                 {      
                     connectionStringformat = $"Data Source={col.connStringServerName};Initial Catalog={col.connStringDatabaseName};User ID = {col.connStringUserName}; Password = {col.connStringPassword}; Integrated Security={IntegratedSecurity};Trust Server Certificate={TrustServerCertificate}";
-                    //Console.WriteLine($"The connection string is : {connectionStringformat}");
                     _logger.LogInformation($"Connecting to {col.connStringDatabaseName} of {col.connStringServerName}.");
                     connectionStringFormatArray.Add(connectionStringformat);
                 }
 
                 await RunQueryFromFilesAsync(connectionStringFormatArray);
-
-                return Ok();
+                return "Ok";
             }
             catch(Exception ex)
             {
                 _logger.LogError($"Failed to get connection strings: {ex.Message}");
-                return BadRequest(ex.Message);
+                return ex.Message;
+
             }
 
-        } 
-
+        }
     }
 }
 
