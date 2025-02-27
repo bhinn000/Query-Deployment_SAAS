@@ -12,7 +12,7 @@ File.WriteAllText("C:\\Hello\\myapp.txt", string.Empty);
 
 builder.ConfigureServices((context, services) =>
 {
-    services.AddScoped<ConnStringController>();
+    services.AddScoped<QueriesExecution>();
     services.AddDbContext<MyDBContext>(
         options =>
         {
@@ -21,10 +21,10 @@ builder.ConfigureServices((context, services) =>
         );
 });
 
-    var app = builder.Build();
+var app = builder.Build();
 
-var controller = app.Services.GetRequiredService<ConnStringController>();
+var controller = app.Services.GetRequiredService<QueriesExecution>();
 await controller.GetConnectionString();
 
-    app.Run();
+app.Run();
 

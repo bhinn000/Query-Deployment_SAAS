@@ -1,0 +1,2 @@
+update Citizen_Details set Occupation='Math Teacher' 
+where CitizenId='CIT03';

@@ -1,2 +1,0 @@
-update Citizen_Details set Occupation='Computer Scientist' 
-where CitizenId='CIT01';

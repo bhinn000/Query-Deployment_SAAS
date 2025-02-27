@@ -1,1 +1,0 @@
-update Basic_Details set MayorName = 'Bhintuna';
