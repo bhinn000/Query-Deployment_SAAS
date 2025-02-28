@@ -206,12 +206,12 @@ namespace SAAS_Query_API.Controllers
                 {
                     foreach (var db in errorDetail)
                     {
-                        Console.WriteLine($"Database: {db.Key} \n {db.Value[-1]} files executed successfully");
+                        _logger.LogInformation($"Database: {db.Key} \n {db.Value[-1]} files executed successfully");
                         foreach (var error in db.Value)
                         {
                             if (error.Key != -1)
                             {
-                                Console.WriteLine($"  FileNo {error.Key}: {error.Value}");
+                                _logger.LogInformation($"  FileNo {error.Key}: {error.Value}");
                             }
                            
                         }
