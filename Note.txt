@@ -24,3 +24,24 @@ make different user for different db 📌📌
 
 Entity Framework Core (EF Core) is a popular ORM in .NET that allows you to work with SQL databases. EF Core uses a DbContext, 
 which represents a session with the database and is responsible for tracking changes, performing database operations, and managing database connections.
+
+Dictionary<string, Dictionary<int, string>> errorDetail = new Dictionary<string, Dictionary<int, string>>
+{
+    { 
+        "DB1", new Dictionary<int, string> 
+        {
+            { -1, "3" },    
+            { 1, "Error executing query for file 1" },
+            { 2, "Error executing query for file 2" },
+            { 3, "Error executing query for file 3" }
+        }
+    },
+    { 
+        "DB2", new Dictionary<int, string> 
+        {
+            { -1, "2" },       
+            { 1, "Error executing query for file 1" },
+            { 2, "Error executing query for file 2" }
+        }
+    }
+};
