@@ -1,5 +1,4 @@
-﻿
-using Microsoft.Data.SqlClient;
+﻿using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using SAAS_Query_API.Data;
 using SAAS_Query_API.Services;
@@ -80,7 +79,6 @@ namespace SAAS_Query_API.Controllers
         {
             string connectionStringformat;
             int DBWithAllFileSuccess = 0;
-            List<string> connectionStringFormatArray = new List<string>();
             ConnectionStringEnt cse = new ConnectionStringEnt();
 
             try
@@ -116,7 +114,7 @@ namespace SAAS_Query_API.Controllers
 
                 if (DBWithAllFileSuccess == ServerDBInfoList.Count())
                 {
-                    _logger.LogInformation($"Run all queries successfully in all {DBWithAllFileSuccess} databases****");
+                    _logger.LogInformation($"Run all queries successfully in all {DBWithAllFileSuccess} databases");
                 }
                 else
                 {
@@ -127,12 +125,12 @@ namespace SAAS_Query_API.Controllers
                         {
                             if (error.Key != -1)
                             {
-                                _logger.LogInformation($"  FileNo {error.Key}: {error.Value}");
+                                _logger.LogInformation($"FileNo {error.Key}: {error.Value}");
                             }
                            
                         }
                     }
-                    _logger.LogInformation($"All queries run successfully only in {DBWithAllFileSuccess} databases****");  
+                    _logger.LogInformation($"All queries run successfully only in {DBWithAllFileSuccess} databases");
                 }
                 Console.Write("Done");
 

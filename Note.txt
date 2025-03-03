@@ -45,3 +45,5 @@ Dictionary<string, Dictionary<int, string>> errorDetail = new Dictionary<string,
         }
     }
 };
+
+build using dotnet publish -c release 
