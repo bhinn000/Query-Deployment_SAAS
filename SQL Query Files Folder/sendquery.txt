@@ -1,3 +1,4 @@
+/*
 if not exists(SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE COLUMN_NAME = 'EnableDocumentUploadInParty' AND TABLE_NAME = 'SETTING')
 ALTER TABLE SETTING ADD EnableDocumentUploadInParty TINYINT DEFAULT 0 WITH VALUES
 
@@ -2670,3 +2671,5 @@ IF EXISTS (SELECT * FROM information_schema.tables where table_name = 'REQUISITI
 
 
 IF EXISTS (SELECT * FROM information_schema.tables where table_name = 'QUOTATION_MAIN') if not exists (select 1 from information_schema.columns where table_name = 'QUOTATION_MAIN' and column_name = 'DATA_ORIGIN' ) alter table QUOTATION_MAIN add DATA_ORIGIN varchar(100) else if exists (select 1 from information_schema.columns where table_name = 'QUOTATION_MAIN' and column_name = 'DATA_ORIGIN' and CHARACTER_MAXIMUM_LENGTH < 100) alter table QUOTATION_MAIN alter column DATA_ORIGIN varchar(100)
+
+*/

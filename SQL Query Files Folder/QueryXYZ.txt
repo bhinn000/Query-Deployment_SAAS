@@ -1,2 +1,8 @@
-update Citizen_Details set Occupation='Computer Teacher' 
-where CitizenId='CIT02';
+/*
+update1 Citizen_Details set Occupation='Lawyer' 
+where CitizenId='CIT01';
+*/
+
+UPDATE Users
+SET email = 'new_email@example.com'
+WHERE username = 'john_doe';

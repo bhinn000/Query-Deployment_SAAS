@@ -1,2 +1,2 @@
-update Citizen_Details set Occupation='Math Teacher' 
+update Citizen_Details set Occupation='Mathematics Teacher' 
 where CitizenId='CIT03';

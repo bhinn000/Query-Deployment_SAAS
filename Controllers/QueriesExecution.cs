@@ -95,6 +95,7 @@ namespace SAAS_Query_API.Controllers
                 bool IntegratedSecurity = false;
                 bool TrustServerCertificate = true;
 
+                //in one db, executing all the queries first
                 foreach (var col in ServerDBInfoList)
                 {
                     connectionStringformat = $"Data Source={col.connStringServerName};Initial Catalog={col.connStringDatabaseName};User ID = {col.connStringUserName}; Password = {col.connStringPassword}; Integrated Security={IntegratedSecurity};Trust Server Certificate={TrustServerCertificate}";

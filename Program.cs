@@ -5,7 +5,7 @@ using Serilog;
 
 var builder = Host.CreateDefaultBuilder(args);
 
-File.WriteAllText("C:\\Hello\\myapp.txt", string.Empty);
+File.WriteAllText("C:\\Hello\\myapp.txt", string.Empty); // to overwrite the file
     builder.UseSerilog((context, configuration)=>
         configuration.ReadFrom.Configuration(context.Configuration)
     );
